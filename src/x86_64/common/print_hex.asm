@@ -1,3 +1,6 @@
+HEX_OUT:
+    db '0x0000', 0
+
 print_hex:
     pusha
     mov si, HEX_OUT + 2
@@ -13,7 +16,7 @@ next_character:
     add bh, 0x30
 
     cmp bh, 0x39
-    jg add_7
+    jg add_39
 
 add_character_hex:
     mov [si], bh
@@ -25,18 +28,15 @@ add_character_hex:
     cmp cx, 4
     jnz next_character
 
-    jmp _done
+    jmp _done_hex
 
-_done:
+add_39:
+    add bh, 0x27
+    jmp add_character_hex
+
+_done_hex:
     mov bx, HEX_OUT
     call print_string
     
     popa
     ret
-
-add_7:
-    add bh, 0x7
-    jmp add_character_hex
-
-HEX_OUT:
-    db '0x0000', 0

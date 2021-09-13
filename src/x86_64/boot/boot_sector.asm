@@ -4,18 +4,21 @@ section .text
     global _start
 
 _start:
+    call clear_screen
+
     mov bx, label
     call print_string
 
-    mov dx, 0x1234
+    mov dx, 0x1a3f
     call print_hex
 
     jmp $
 
     label: db 'Booting AttemptOS...', 0
 
-    %include "print_string.asm"
-    %include "print_hex.asm"
+    %include "x86_64/common/print_string.asm"
+    %include "x86_64/common/print_hex.asm"
+    %include "x86_64/common/screen_utilities.asm"
 
     ; Padding and magic BIOS number
     times 510-($-$$) db 0
