@@ -1,11 +1,8 @@
 FROM gcc:latest
 
-RUN apt update
-RUN apt upgrade -y
-RUN apt install -y nasm
-RUN apt install -y grub-pc-bin
-RUN apt install -y grub-common
-RUN apt install -y xorriso
+RUN apt-get update
+RUN apt-get upgrade -y
+RUN apt-get install -y nasm
 
 VOLUME /root/env
 WORKDIR /root/env
