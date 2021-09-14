@@ -1,19 +1,20 @@
 print_string:
     pusha
 
-start:
+print_string_loop:
     mov al, [bx]
 
     cmp al, 0
-    je _done_string
+    je print_string_done
     
     mov ah, 0x0e
     int 0x10
 
     add bx, 1
-    jmp start
+    
+    jmp print_string_loop
 
-_done_string:
+print_string_done:
     mov al, 0x0d
     int 0x10
 
