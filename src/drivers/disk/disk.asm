@@ -1,9 +1,10 @@
 disk_load:
+    pusha
     push dx
 
     mov ah, 0x02
     mov al, dh
-    
+
     mov dh, 0x00
     mov ch, 0x00
     mov cl, 0x02
@@ -13,9 +14,10 @@ disk_load:
     jc disk_error
 
     pop dx
-    cmp dh, al
+    cmp al, dh
     jne disk_error
 
+    popa
     ret
 
 disk_error:

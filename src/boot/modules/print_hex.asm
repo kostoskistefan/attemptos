@@ -37,6 +37,6 @@ add_39:
 _done_hex:
     mov bx, HEX_OUT
     call print_string
-    
+
     popa
     ret
