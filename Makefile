@@ -8,7 +8,7 @@ CC := gcc
 CFLAGS := -ffreestanding -m32
 
 QEMU := qemu-system-x86_64
-QEMUFLAGS := --full-screen -fda
+QEMUFLAGS := -fda
 
 SOURCE_DIR := src
 BUILD_DIR := build

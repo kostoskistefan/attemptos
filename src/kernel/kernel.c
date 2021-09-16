@@ -1,7 +1,8 @@
 #include "../drivers/screen/screen.h"
+#include "utilities.h"
 
-void main()
+int main()
 {
     clear_screen();
-    print_at("XYZ", 1, 1);
+    print_at("Stefan Kostoski", 1, 1);
 }

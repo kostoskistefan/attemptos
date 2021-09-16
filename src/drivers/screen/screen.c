@@ -5,10 +5,13 @@
 
 int get_cursor();
 void set_cursor(int offset);
-int get_screen_offset(int row, int col);
+int print_char(char character, int row, int col, char attribute_byte);
+
 int get_row_offset(int offset);
 int get_col_offset(int offset);
-int print_char(char character, int row, int col, char attribute_byte);
+int get_screen_offset(int row, int col);
+int handle_scrolling(int cursor_offset);
+void memory_copy(char * source, char * destination, int no_bytes);
 
 // ------------------------ Function implementations ------------------------
 
@@ -20,10 +23,10 @@ void print(char *text)
 void print_at(char *text, int row, int col)
 {
     int offset;
-    
+
     if (col >= 0 && row >= 0)
         offset = get_screen_offset(col, row);
-    
+
     else 
     {
         offset = get_cursor();
@@ -69,7 +72,7 @@ int print_char(char character, int row, int col, char attribute_byte)
 
     if (character == '\n')
     {
-        int row = offset / (2 * MAX_COLS);
+        int row = get_row_offset(offset);
         offset = get_screen_offset(0, row + 1);
     }
 
@@ -79,6 +82,8 @@ int print_char(char character, int row, int col, char attribute_byte)
         video_memory[offset + 1] = attribute_byte;
         offset += 2;
     }
+
+    offset = handle_scrolling(offset);
 
     set_cursor(offset);
     return offset;
@@ -117,4 +122,26 @@ int get_row_offset(int offset)
 int get_col_offset(int offset)
 {
     return (offset - (get_row_offset(offset) * 2 * MAX_COLS)) / 2;
+}
+
+int handle_scrolling(int cursor_offset)
+{
+    if(cursor_offset < MAX_ROWS * MAX_COLS * 2)
+        return cursor_offset;
+
+    for (int i = 1; i < MAX_ROWS; i++)
+    {
+        memory_copy(get_screen_offset(i, 0) + VIDEO_ADDRESS,
+                get_screen_offset(i - 1, 0) + VIDEO_ADDRESS,
+                MAX_COLS * 2);
+    }
+
+    char *last_line = get_screen_offset(MAX_ROWS - 1, 0) + VIDEO_ADDRESS;
+    
+    for (int i = 0; i < MAX_COLS * 2; i++)
+        last_line[i] = 0;
+
+    cursor_offset -= 2 * MAX_COLS;
+
+    return cursor_offset;
 }
