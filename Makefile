@@ -8,7 +8,6 @@ CC := gcc
 CFLAGS := -ffreestanding -m32
 
 QEMU := qemu-system-x86_64
-QEMUFLAGS := -fda
 
 SOURCE_DIR := src
 BUILD_DIR := build
@@ -27,17 +26,17 @@ dir:
 os-image.bin: ${SOURCE_DIR}/boot/boot_sector.bin kernel.bin
 	cat $^ > os-image.bin
 
-kernel.bin: ${SOURCE_DIR}/boot/kernel_entry.o ${OBJ}
+kernel.bin: ${SOURCE_DIR}/boot/kernel_entry.o ${OBJ} ${SOURCE_DIR}/cpu/interrupt.o
 	${LD} -o $@ ${LDFLAGS} $^
 
 run:
-	${QEMU} ${QEMUFLAGS} os-image.bin
+	${QEMU} -blockdev driver=file,node-name=f0,filename=os-image.bin -device floppy,drive=f0 
 
 %.o: %.c ${HEADERS}
 	${CC} ${CFLAGS} -c $< -o $@
 
 %.o: %.asm
-	${NASM} ${NASMFLAGS} $< -f elf -o $@
+	${NASM} ${NASMFLAGS} $< -f elf32 -o $@
 
 %.bin: %.asm
 	${NASM} ${NASMFLAGS} $< -f bin -o $@

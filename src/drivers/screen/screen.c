@@ -1,5 +1,5 @@
 #include "screen.h"
-#include "ports.h"
+#include "../ports/ports.h"
 
 // -------------------------- Function declaration --------------------------
 
@@ -73,7 +73,7 @@ int print_char(char character, int row, int col, char attribute_byte)
     if (character == '\n')
     {
         int row = get_row_offset(offset);
-        offset = get_screen_offset(0, row + 1);
+        offset = get_screen_offset(row + 1, 0);
     }
 
     else
