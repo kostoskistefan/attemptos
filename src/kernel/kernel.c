@@ -1,15 +1,9 @@
-#include "utilities.h"
-#include "../cpu/idt.h"
-#include "../cpu/isr.h"
-#include "../cpu/timer.h"
+#include "../cpu/isr/isr.h"
 #include "../drivers/screen/screen.h"
 
-int main()
+void main()
 {
-    isr_install();
-
     clear_screen();
-
-    asm volatile ("sti");
-    init_timer(50);
+    isr_install();
+    irq_install();
 }

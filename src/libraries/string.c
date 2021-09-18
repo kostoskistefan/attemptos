@@ -1,17 +1,4 @@
-#include "utilities.h"
-
-void memory_set(uint8 *destination, uint8 value, uint32 length)
-{
-    uint8* temp = (uint8 *) destination;
-    for(; length != 0; length--)
-        *temp++ = value;
-}
-
-void memory_copy(uint8 * source, uint8 * destination, uint32 no_bytes)
-{
-    for (int i = 0; i < no_bytes; i++) 
-        *(destination + i) = *(source + i);
-}
+#include "string.h"
 
 void reverse(char str[])
 {
@@ -49,4 +36,10 @@ void int_to_string(int n, char str[])
     str[i] = '\0';
 
     reverse(str);
+}
+
+void append(char str[], char character) {
+    int len = strlen(str);
+    str[len] = character;
+    str[len+1] = '\0';
 }

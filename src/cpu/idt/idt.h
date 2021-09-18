@@ -1,8 +1,7 @@
 #ifndef IDT_H
 #define IDT_H
 
-#include "types.h"
-#include "../kernel/utilities.h"
+#include "../types.h"
 
 #define IDT_ENTRIES 256
 #define KERNEL_CODE_SEGMENT 0x08

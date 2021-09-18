@@ -1,5 +1,7 @@
 #include "screen.h"
-#include "../ports/ports.h"
+#include "../../cpu/types.h"
+#include "../../cpu/ports/ports.h"
+#include "../../libraries/mem.h"
 
 // -------------------------- Function declaration --------------------------
 
@@ -11,7 +13,6 @@ int get_row_offset(int offset);
 int get_col_offset(int offset);
 int get_screen_offset(int row, int col);
 int handle_scrolling(int cursor_offset);
-void memory_copy(char * source, char * destination, int no_bytes);
 
 // ------------------------ Function implementations ------------------------
 
@@ -44,7 +45,7 @@ void print_at(char *text, int row, int col)
 
 void clear_screen()
 {
-    unsigned char *video_memory = (unsigned char *)VIDEO_ADDRESS;
+    uint8 *video_memory = (uint8 *)VIDEO_ADDRESS;
 
     for (int i = 0; i < MAX_ROWS * MAX_COLS; i++)
     {
@@ -57,7 +58,7 @@ void clear_screen()
 
 int print_char(char character, int row, int col, char attribute_byte)
 {
-    unsigned char *video_memory = (unsigned char *)VIDEO_ADDRESS;
+    uint8 *video_memory = (uint8 *)VIDEO_ADDRESS;
 
     if (!attribute_byte)
         attribute_byte = WHITE_ON_BLACK;
@@ -72,8 +73,20 @@ int print_char(char character, int row, int col, char attribute_byte)
 
     if (character == '\n')
     {
-        int row = get_row_offset(offset);
-        offset = get_screen_offset(row + 1, 0);
+        int rows = get_row_offset(offset);
+        offset = get_screen_offset(rows + 1, 0);
+    }
+
+    else if(character == '\b')
+    {
+        if(row >= 0 && col > 0)
+        {
+            int cols = get_col_offset(offset);
+            offset = get_screen_offset(row, cols - 1);
+
+            video_memory[offset] = ' ';
+            video_memory[offset + 1] = attribute_byte;
+        }
     }
 
     else
@@ -131,12 +144,12 @@ int handle_scrolling(int cursor_offset)
 
     for (int i = 1; i < MAX_ROWS; i++)
     {
-        memory_copy(get_screen_offset(i, 0) + VIDEO_ADDRESS,
-                get_screen_offset(i - 1, 0) + VIDEO_ADDRESS,
+        memory_copy((uint8*)(get_screen_offset(i, 0) + VIDEO_ADDRESS),
+                (uint8*)(get_screen_offset(i - 1, 0) + VIDEO_ADDRESS),
                 MAX_COLS * 2);
     }
 
-    char *last_line = get_screen_offset(MAX_ROWS - 1, 0) + VIDEO_ADDRESS;
+    char *last_line = (char*) (get_screen_offset(MAX_ROWS - 1, 0) + VIDEO_ADDRESS);
     
     for (int i = 0; i < MAX_COLS * 2; i++)
         last_line[i] = 0;

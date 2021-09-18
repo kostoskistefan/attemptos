@@ -1,14 +1,16 @@
 #include "isr.h"
-#include "idt.h"
-#include "../kernel/utilities.h"
-#include "../drivers/screen/screen.h"
-#include "../drivers/ports/ports.h"
+#include "../idt/idt.h"
+#include "../timer/timer.h"
+#include "../ports/ports.h"
+#include "../../libraries/string.h"
+#include "../../drivers/screen/screen.h"
+#include "../../drivers/keyboard/keyboard.h"
 
 isr_t interrupt_handlers[256];
 
 void isr_handler(registers_t reg)
 {
-    print("Received interrupt: ");
+    print("Interrupt: ");
     
     char s[3];
     int_to_string(reg.int_no, s);
@@ -103,4 +105,12 @@ void irq_handler(registers_t reg) {
         isr_t handler = interrupt_handlers[reg.int_no];
         handler(reg);
     }
+}
+
+void irq_install()
+{
+    asm volatile ("sti");
+    // init_timer(50);
+
+    init_keyboard();
 }

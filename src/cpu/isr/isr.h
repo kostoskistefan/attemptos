@@ -1,7 +1,7 @@
 #ifndef ISR
 #define ISR
 
-#include "types.h"
+#include "../types.h"
 
 #define IRQ0 32
 #define IRQ1 33
@@ -28,8 +28,11 @@ typedef struct
     uint32 eip, cs, eflags, useresp, ss;
 } registers_t;
 
+
 void isr_install();
 void isr_handler(registers_t reg);
+
+void irq_install();
 
 typedef void (*isr_t)(registers_t);
 void register_interrupt_handler(uint8 n, isr_t handler);

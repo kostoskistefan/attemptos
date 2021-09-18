@@ -1,22 +1,14 @@
 #include "timer.h"
-#include "isr.h"
-#include "../kernel/utilities.h"
-#include "../drivers/screen/screen.h"
-#include "../drivers/ports/ports.h"
+#include "../isr/isr.h"
+#include "../ports/ports.h"
+#include "../../libraries/function.h"
 
 uint32 tick = 0;
 
 void timer_callback(registers_t reg)
 {
+    UNUSED(reg);
     tick++;
-
-    print("Tick: ");
-
-    char tick_ascii[256];
-    int_to_string(tick, tick_ascii);
-
-    print(tick_ascii);
-    print("\n");
 }
 
 void init_timer(uint32 frequency)

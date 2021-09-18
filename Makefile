@@ -5,7 +5,7 @@ LD := ld
 LDFLAGS := -Ttext 0x1000 --oformat binary --entry main -m elf_i386
 
 CC := gcc
-CFLAGS := -ffreestanding -m32
+CFLAGS := -ffreestanding -m32 -g -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -Wall -Wextra -Werror
 
 QEMU := qemu-system-x86_64
 
