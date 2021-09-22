@@ -4,7 +4,7 @@
 #include "../../cpu/ports/ports.h"
 #include "../../libraries/function.h"
 
-const uint8 scancode_set_1[128] = {
+const uint8_t scancode_set_1[128] = {
     0,
     27,
     '1',
@@ -87,11 +87,11 @@ const uint8 scancode_set_1[128] = {
     0
 };
 
-void keyboard_callback(registers_t reg)
+void keyboard_callback(registers_t *reg)
 {
     UNUSED(reg);
 
-    uint8 scancode = port_byte_in(0x60);
+    uint8_t scancode = port_byte_in(0x60);
     char letter[2] = {scancode_set_1[scancode], '\0'};
 
     // On key release

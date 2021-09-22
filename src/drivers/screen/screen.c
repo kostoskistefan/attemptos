@@ -1,5 +1,4 @@
 #include "screen.h"
-#include "../../cpu/types.h"
 #include "../../cpu/ports/ports.h"
 #include "../../libraries/mem.h"
 
@@ -45,7 +44,7 @@ void print_at(char *text, int row, int col)
 
 void clear_screen()
 {
-    uint8 *video_memory = (uint8 *)VIDEO_ADDRESS;
+    uint8_t *video_memory = (uint8_t *)VIDEO_ADDRESS;
 
     for (int i = 0; i < MAX_ROWS * MAX_COLS; i++)
     {
@@ -58,7 +57,7 @@ void clear_screen()
 
 int print_char(char character, int row, int col, char attribute_byte)
 {
-    uint8 *video_memory = (uint8 *)VIDEO_ADDRESS;
+    uint8_t *video_memory = (uint8_t *)VIDEO_ADDRESS;
 
     if (!attribute_byte)
         attribute_byte = WHITE_ON_BLACK;
@@ -144,8 +143,8 @@ int handle_scrolling(int cursor_offset)
 
     for (int i = 1; i < MAX_ROWS; i++)
     {
-        memory_copy((uint8*)(get_screen_offset(i, 0) + VIDEO_ADDRESS),
-                (uint8*)(get_screen_offset(i - 1, 0) + VIDEO_ADDRESS),
+        memory_copy((uint8_t*)(get_screen_offset(i, 0) + VIDEO_ADDRESS),
+                (uint8_t*)(get_screen_offset(i - 1, 0) + VIDEO_ADDRESS),
                 MAX_COLS * 2);
     }
 

@@ -1,7 +1,7 @@
 #include "../cpu/isr/isr.h"
 #include "../drivers/screen/screen.h"
 
-void main()
+void kernel_main()
 {
     clear_screen();
     isr_install();

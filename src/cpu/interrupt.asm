@@ -13,9 +13,14 @@ isr_common_stub:
     mov fs, ax
     mov gs, ax
 
+    pop esp
+
+    cld
     call isr_handler
 
     pop eax
+    pop eax
+
     mov ds, ax
     mov es, ax
     mov fs, ax
@@ -23,7 +28,6 @@ isr_common_stub:
 
     popa
     add esp, 8
-    sti
     iret
 
 irq_common_stub:
@@ -38,9 +42,14 @@ irq_common_stub:
     mov fs, ax
     mov gs, ax
 
+    push esp
+
+    cld
     call irq_handler
 
     pop ebx
+    pop ebx
+
     mov ds, ax
     mov es, ax
     mov fs, ax
@@ -48,22 +57,19 @@ irq_common_stub:
 
     popa
     add esp, 8
-    sti
     iret
 
 %macro ISR_NOERRCODE 1
 [global isr%1]
 isr%1:
-    cli
     push byte 0
-    push byte %1
+    push %1
     jmp isr_common_stub
 %endmacro
 
 %macro ISR_ERRCODE 1
 [global isr%1]
 isr%1:
-    cli
     push byte %1
     jmp isr_common_stub
 %endmacro
@@ -71,9 +77,8 @@ isr%1:
 %macro IRQ 2
 [global irq%1]
 irq%1:
-	cli
 	push byte %1
-	push byte %2
+	push %2
 	jmp irq_common_stub
 %endmacro
 

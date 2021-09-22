@@ -8,12 +8,12 @@
 
 isr_t interrupt_handlers[256];
 
-void isr_handler(registers_t reg)
+void isr_handler(registers_t *reg)
 {
     print("Interrupt: ");
     
     char s[3];
-    int_to_string(reg.int_no, s);
+    int_to_string(reg->int_no, s);
     
     print(s);
 
@@ -91,18 +91,18 @@ void isr_install()
     set_idt();
 }
 
-void register_interrupt_handler(uint8 n, isr_t handler) {
+void register_interrupt_handler(uint8_t n, isr_t handler) {
     interrupt_handlers[n] = handler;
 }
 
-void irq_handler(registers_t reg) {
-    if (reg.int_no >= 40) 
+void irq_handler(registers_t *reg) {
+    if (reg->int_no >= 40) 
         port_byte_out(0xA0, 0x20);
 
     port_byte_out(0x20, 0x20);
 
-    if (interrupt_handlers[reg.int_no] != 0) {
-        isr_t handler = interrupt_handlers[reg.int_no];
+    if (interrupt_handlers[reg->int_no] != 0) {
+        isr_t handler = interrupt_handlers[reg->int_no];
         handler(reg);
     }
 }

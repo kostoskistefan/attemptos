@@ -1,9 +1,9 @@
 #ifndef MEM_H
 #define MEM_H
 
-#include "../cpu/types.h"
+#include <stdint.h>
 
-void memory_set(uint8 *destination, uint8 value, uint32 length);
-void memory_copy(uint8 *source, uint8 *destination, int no_bytes);
+void memory_set(uint8_t *destination, uint8_t value, uint32_t length);
+void memory_copy(uint8_t *source, uint8_t *destination, int no_bytes);
 
 #endif
