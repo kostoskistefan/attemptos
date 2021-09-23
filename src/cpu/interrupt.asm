@@ -1,3 +1,5 @@
+[bits 32]
+
 [extern isr_handler]
 [extern irq_handler]
 
@@ -13,7 +15,7 @@ isr_common_stub:
     mov fs, ax
     mov gs, ax
 
-    pop esp
+    push esp
 
     cld
     call isr_handler
@@ -50,10 +52,10 @@ irq_common_stub:
     pop ebx
     pop ebx
 
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
+    mov ds, bx
+    mov es, bx
+    mov fs, bx
+    mov gs, bx
 
     popa
     add esp, 8
@@ -83,7 +85,7 @@ irq%1:
 %endmacro
 
 %assign i 0
-%rep    33
+%rep    32
     %if i >= 15
         ISR_NOERRCODE i
     %elif i >= 10

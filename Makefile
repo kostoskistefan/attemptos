@@ -29,8 +29,16 @@ os-image.bin: ${SOURCE_DIR}/boot/boot_sector.bin kernel.bin
 kernel.bin: ${SOURCE_DIR}/boot/kernel_entry.o ${OBJ} ${SOURCE_DIR}/cpu/interrupt.o
 	${LD} -o $@ ${LDFLAGS} $^
 
+kernel.elf: ${SOURCE_DIR}/boot/kernel_entry.o ${OBJ} ${SOURCE_DIR}/cpu/interrupt.o
+	${LD} -o $@ -m elf_i386 -Ttext 0x1000 $^ 
+
 run:
 	${QEMU} -blockdev driver=file,node-name=f0,filename=os-image.bin -device floppy,drive=f0 
+
+debug: os-image.bin kernel.elf
+	${QEMU} -s -S -blockdev driver=file,node-name=f0,filename=os-image.bin -device floppy,drive=f0 &
+	gdb -tui -ex "target remote :1234" -ex "symbol-file kernel.elf"
+
 
 %.o: %.c ${HEADERS}
 	${CC} ${CFLAGS} -c $< -o $@

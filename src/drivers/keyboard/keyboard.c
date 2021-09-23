@@ -87,7 +87,7 @@ const uint8_t scancode_set_1[128] = {
     0
 };
 
-void keyboard_callback(registers_t *reg)
+static void keyboard_callback(registers_t *reg)
 {
     UNUSED(reg);
 

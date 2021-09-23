@@ -5,19 +5,70 @@
 #include "../../libraries/string.h"
 #include "../../drivers/screen/screen.h"
 #include "../../drivers/keyboard/keyboard.h"
+#include "../../libraries/function.h"
 
 isr_t interrupt_handlers[256];
+char *isr_exceptions[] = {
+    "Division By Zero",
+    "Debug",
+    "NMI",
+    "Breakpoint",
+    "Signed Number Overflow",
+    "Bound Range Exceeded",
+    "Invalid Opcode",
+    "Device Not Available",
+    "Double Fault",
+    "Coprocessor Segment Overrun",
+    "Invalid TSS",
+    "Segment Not Present",
+    "Stack-Segment Fault",
+    "General Protection Fault",
+    "Page Fault",
+    "Reserved",
+    "x87 Floating-Point",
+    "Alignment Check",
+    "Machine Check",
+    "SIMD Floating-Point",
+    "Virtualization",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Security",
+    "Reserved",
+};
 
 void isr_handler(registers_t *reg)
 {
-    print("Interrupt: ");
-    
-    char s[3];
-    int_to_string(reg->int_no, s);
-    
-    print(s);
 
-    while(1);
+    port_byte_out(0xA1, port_byte_in(0xA1) | (1 << 5));
+
+    void (*handler)(registers_t * reg);
+    handler = interrupt_handlers[reg->int_no];
+
+    if (handler)
+        handler(reg);
+
+    else
+    {
+        print("An interrupt has occured: ISR");
+
+        char s[3];
+        int_to_string(reg->int_no, s);
+
+        print(s);
+
+        print("\nException: ");
+        print(isr_exceptions[reg->int_no]);
+        print("\n");
+
+        asm volatile("hlt");
+    }
 }
 
 void irq_remap()
@@ -30,22 +81,22 @@ void irq_remap()
     port_byte_out(0xA1, 0x02);
     port_byte_out(0x21, 0x01);
     port_byte_out(0xA1, 0x01);
-    port_byte_out(0x21, 0x0);
-    port_byte_out(0xA1, 0x0); 
+    port_byte_out(0x21, 0x00);
+    port_byte_out(0xA1, 0x00);
 }
 
-void isr_install() 
+void isr_install()
 {
-    set_idt_gate(0,  (unsigned)isr0);
-    set_idt_gate(1,  (unsigned)isr1);
-    set_idt_gate(2,  (unsigned)isr2);
-    set_idt_gate(3,  (unsigned)isr3);
-    set_idt_gate(4,  (unsigned)isr4);
-    set_idt_gate(5,  (unsigned)isr5);
-    set_idt_gate(6,  (unsigned)isr6);
-    set_idt_gate(7,  (unsigned)isr7);
-    set_idt_gate(8,  (unsigned)isr8);
-    set_idt_gate(9,  (unsigned)isr9);
+    set_idt_gate(0, (unsigned)isr0);
+    set_idt_gate(1, (unsigned)isr1);
+    set_idt_gate(2, (unsigned)isr2);
+    set_idt_gate(3, (unsigned)isr3);
+    set_idt_gate(4, (unsigned)isr4);
+    set_idt_gate(5, (unsigned)isr5);
+    set_idt_gate(6, (unsigned)isr6);
+    set_idt_gate(7, (unsigned)isr7);
+    set_idt_gate(8, (unsigned)isr8);
+    set_idt_gate(9, (unsigned)isr9);
     set_idt_gate(10, (unsigned)isr10);
     set_idt_gate(11, (unsigned)isr11);
     set_idt_gate(12, (unsigned)isr12);
@@ -91,26 +142,27 @@ void isr_install()
     set_idt();
 }
 
-void register_interrupt_handler(uint8_t n, isr_t handler) {
+void register_interrupt_handler(uint8_t n, isr_t handler)
+{
     interrupt_handlers[n] = handler;
 }
 
-void irq_handler(registers_t *reg) {
-    if (reg->int_no >= 40) 
-        port_byte_out(0xA0, 0x20);
-
+void irq_handler(registers_t *reg)
+{
     port_byte_out(0x20, 0x20);
 
-    if (interrupt_handlers[reg->int_no] != 0) {
-        isr_t handler = interrupt_handlers[reg->int_no];
+    if (reg->int_no >= 40)
+        port_byte_out(0xA0, 0x20);
+
+    void (*handler)(registers_t * reg);
+    handler = interrupt_handlers[reg->int_no];
+
+    if (handler)
         handler(reg);
-    }
 }
 
 void irq_install()
 {
-    asm volatile ("sti");
-    // init_timer(50);
-
+    init_timer(50);
     init_keyboard();
 }

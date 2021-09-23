@@ -1,5 +1,5 @@
-#ifndef ISR
-#define ISR
+#ifndef ISR_H
+#define ISR_H
 
 #include <stdint.h>
 
@@ -86,6 +86,5 @@ extern void irq12();
 extern void irq13();
 extern void irq14();
 extern void irq15();
-
 
 #endif

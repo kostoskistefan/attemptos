@@ -19,12 +19,12 @@ int strlen(char str[])
 
 void int_to_string(int n, char str[]) 
 {
-    int i, sign;
+    int sign;
 
     if ((sign = n) < 0) 
         n = -n;
 
-    i = 0;
+    int i = 0;
 
     do {
         str[i++] = n % 10 + '0';
