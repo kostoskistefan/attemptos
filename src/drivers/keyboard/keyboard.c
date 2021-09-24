@@ -3,6 +3,9 @@
 #include "../../cpu/isr/isr.h"
 #include "../../cpu/ports/ports.h"
 #include "../../libraries/function.h"
+#include "../../system/shell/shell.h"
+
+static char key_buffer[256];
 
 const uint8_t scancode_set_1[128] = {
     0,
@@ -92,11 +95,31 @@ static void keyboard_callback(registers_t *reg)
     UNUSED(reg);
 
     uint8_t scancode = port_byte_in(0x60);
-    char letter[2] = {scancode_set_1[scancode], '\0'};
 
-    // On key release
+    if(scancode > SCANCODE_MAX_VALUE)
+        return;
+
     if(!(scancode & 0x80))
-        print(letter);
+    {
+        if(scancode == ENTER_KEY)
+        {
+            print("\n");
+            execute(key_buffer);
+            key_buffer[0] = 0;
+        }
+
+        else if(scancode == BACKSPACE_KEY)
+        {
+            key_buffer[strlen(key_buffer) - 1] = '\0';
+            delete_last_character();
+        }
+
+        else
+        {
+            append(key_buffer, scancode_set_1[scancode]);
+            printf("%s", toString(scancode_set_1[scancode]));
+        }
+    }
 }
 
 void init_keyboard()

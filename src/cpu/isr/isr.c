@@ -56,12 +56,8 @@ void isr_handler(registers_t *reg)
 
     else
     {
-        print("An interrupt has occured: ISR");
-        print(itoa(reg->int_no));
-
-        print("\nException: ");
-        print(isr_exceptions[reg->int_no]);
-        print("\n");
+        printf("%s %d\n", "An interrupt has occured: ISR", reg->int_no);
+        printf("%s %d\n", "Exception: ", isr_exceptions[reg->int_no]);
 
         asm volatile("hlt");
     }

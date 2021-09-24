@@ -15,8 +15,9 @@
 #define REG_SCREEN_DATA 0x3D5
 
 void clear_screen();
-void print_at(char *text, int col, int row);
 void print(char *text);
+void delete_last_character();
 void printf(char *format, ...);
+void print_at(char *text, int col, int row);
 
 #endif

@@ -4,10 +4,10 @@
 
 // -------------------------- Function declaration --------------------------
 
-int get_cursor();
-void set_cursor(int offset);
 int print_char(char character, int row, int col, char attribute_byte);
 
+int get_cursor();
+void set_cursor(int offset);
 int get_row_offset(int offset);
 int get_col_offset(int offset);
 int get_screen_offset(int row, int col);
@@ -96,6 +96,15 @@ void clear_screen()
     set_cursor(get_screen_offset(0, 0));
 }
 
+void delete_last_character()
+{
+    int offset = get_cursor() - 2;
+    int row = get_row_offset(offset);
+    int col = get_col_offset(offset);
+
+    print_char(0x08, row, col, WHITE_ON_BLACK);
+}
+
 int print_char(char character, int row, int col, char attribute_byte)
 {
     uint8_t *video_memory = (uint8_t *)VIDEO_ADDRESS;
@@ -119,14 +128,8 @@ int print_char(char character, int row, int col, char attribute_byte)
 
     else if (character == '\b')
     {
-        if (row >= 0 && col > 0)
-        {
-            int cols = get_col_offset(offset);
-            offset = get_screen_offset(row, cols - 1);
-
-            video_memory[offset] = ' ';
-            video_memory[offset + 1] = attribute_byte;
-        }
+        video_memory[offset] = ' ';
+        video_memory[offset + 1] = attribute_byte;
     }
 
     else
