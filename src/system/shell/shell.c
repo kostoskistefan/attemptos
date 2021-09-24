@@ -2,6 +2,12 @@
 
 void execute(char* command)
 {
+    if(strcmp(command, "") == 0)
+    {
+        print("\n> ");
+        return;
+    }
+        
     if (strcmp(command, "exit") == 0) {
         printf("%s", "Stopping the CPU. Exiting...");
         asm volatile("hlt");
