@@ -3,9 +3,9 @@
 #include "../timer/timer.h"
 #include "../ports/ports.h"
 #include "../../libraries/string.h"
+#include "../../libraries/function.h"
 #include "../../drivers/screen/screen.h"
 #include "../../drivers/keyboard/keyboard.h"
-#include "../../libraries/function.h"
 
 isr_t interrupt_handlers[256];
 char *isr_exceptions[] = {
@@ -57,11 +57,7 @@ void isr_handler(registers_t *reg)
     else
     {
         print("An interrupt has occured: ISR");
-
-        char s[3];
-        int_to_string(reg->int_no, s);
-
-        print(s);
+        print(itoa(reg->int_no));
 
         print("\nException: ");
         print(isr_exceptions[reg->int_no]);

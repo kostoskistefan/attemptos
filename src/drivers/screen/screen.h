@@ -2,6 +2,8 @@
 #define SCREEN_H
 
 #include <stdint.h>
+#include <stdarg.h>
+#include "../../libraries/string.h"
 
 #define VIDEO_ADDRESS 0xb8000
 #define MAX_ROWS 25
@@ -15,5 +17,6 @@
 void clear_screen();
 void print_at(char *text, int col, int row);
 void print(char *text);
+void printf(char *format, ...);
 
 #endif

@@ -95,11 +95,7 @@ static void keyboard_callback(registers_t *reg)
     char letter[2] = {scancode_set_1[scancode], '\0'};
 
     // On key release
-    if(scancode & 0x80)
-        print("");
-
-    // On key press
-    else
+    if(!(scancode & 0x80))
         print(letter);
 }
 

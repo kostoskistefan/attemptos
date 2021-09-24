@@ -4,6 +4,7 @@
 int strlen(char str[]);
 void reverse(char str[]);
 void append(char s[], char n);
-void int_to_string(int n, char str[]);
+char* itoa(int number);
+char* toString(char letter);
 
 #endif

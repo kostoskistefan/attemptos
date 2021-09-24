@@ -15,6 +15,47 @@ int handle_scrolling(int cursor_offset);
 
 // ------------------------ Function implementations ------------------------
 
+void printf(char *format, ...)
+{
+    int i;
+    char *s;
+
+    va_list arg;
+    va_start(arg, format);
+
+    for (char *traverse = format; *traverse != '\0'; traverse++)
+    {
+        while (*traverse != '%' && *traverse != '\0')
+        {
+            print(toString(*traverse));
+            traverse++;
+        }
+
+        traverse++;
+
+        switch (*traverse)
+        {
+        case 'c':
+            i = va_arg(arg, int); 
+            print(toString(i));
+            break;
+
+        case 'd':
+            i = va_arg(arg, int); 
+            print(itoa(i));
+            break;
+
+        case 's':
+            s = va_arg(arg, char *); 
+            print(s);
+            break;
+        }
+    }
+
+    
+    va_end(arg);
+}
+
 void print(char *text)
 {
     print_at(text, -1, -1);
@@ -27,7 +68,7 @@ void print_at(char *text, int row, int col)
     if (col >= 0 && row >= 0)
         offset = get_screen_offset(col, row);
 
-    else 
+    else
     {
         offset = get_cursor();
         row = get_row_offset(offset);
@@ -36,7 +77,7 @@ void print_at(char *text, int row, int col)
 
     for (int i = 0; text[i] != 0; i++)
     {
-        offset = print_char(text[i], row, col, WHITE_ON_BLACK); 
+        offset = print_char(text[i], row, col, WHITE_ON_BLACK);
         row = get_row_offset(offset);
         col = get_col_offset(offset);
     }
@@ -76,9 +117,9 @@ int print_char(char character, int row, int col, char attribute_byte)
         offset = get_screen_offset(rows + 1, 0);
     }
 
-    else if(character == '\b')
+    else if (character == '\b')
     {
-        if(row >= 0 && col > 0)
+        if (row >= 0 && col > 0)
         {
             int cols = get_col_offset(offset);
             offset = get_screen_offset(row, cols - 1);
@@ -138,18 +179,18 @@ int get_col_offset(int offset)
 
 int handle_scrolling(int cursor_offset)
 {
-    if(cursor_offset < MAX_ROWS * MAX_COLS * 2)
+    if (cursor_offset < MAX_ROWS * MAX_COLS * 2)
         return cursor_offset;
 
     for (int i = 1; i < MAX_ROWS; i++)
     {
-        memory_copy((uint8_t*)(get_screen_offset(i, 0) + VIDEO_ADDRESS),
-                (uint8_t*)(get_screen_offset(i - 1, 0) + VIDEO_ADDRESS),
-                MAX_COLS * 2);
+        memory_copy((uint8_t *)(get_screen_offset(i, 0) + VIDEO_ADDRESS),
+                    (uint8_t *)(get_screen_offset(i - 1, 0) + VIDEO_ADDRESS),
+                    MAX_COLS * 2);
     }
 
-    char *last_line = (char*) (get_screen_offset(MAX_ROWS - 1, 0) + VIDEO_ADDRESS);
-    
+    char *last_line = (char *)(get_screen_offset(MAX_ROWS - 1, 0) + VIDEO_ADDRESS);
+
     for (int i = 0; i < MAX_COLS * 2; i++)
         last_line[i] = 0;
 

@@ -13,22 +13,33 @@ void reverse(char str[])
 int strlen(char str[])
 {
     int i = 0;
-    while(str[i] != '\0') i++;
+    while (str[i] != '\0')
+        i++;
     return i;
 }
 
-void int_to_string(int n, char str[]) 
+void append(char str[], char character)
 {
+    int len = strlen(str);
+    str[len] = character;
+    str[len + 1] = '\0';
+}
+
+char* itoa(int number)
+{
+    static char str[50];
+
     int sign;
 
-    if ((sign = n) < 0) 
-        n = -n;
+    if ((sign = number) < 0)
+        number = -number;
 
     int i = 0;
 
-    do {
-        str[i++] = n % 10 + '0';
-    } while ((n /= 10) > 0);
+    do
+    {
+        str[i++] = number % 10 + '0';
+    } while ((number /= 10) > 0);
 
     if (sign < 0)
         str[i++] = '-';
@@ -36,10 +47,13 @@ void int_to_string(int n, char str[])
     str[i] = '\0';
 
     reverse(str);
+
+    return str;
 }
 
-void append(char str[], char character) {
-    int len = strlen(str);
-    str[len] = character;
-    str[len+1] = '\0';
+char *toString(char letter)
+{
+    static char out[2] = "\0";
+    out[0] = letter;
+    return out;
 }
